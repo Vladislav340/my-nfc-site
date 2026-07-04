@@ -7,43 +7,74 @@
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
 body{
-    background:#000;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    width:100vw;
-    height:100vh;
-    overflow:hidden;
-    cursor:pointer;
+background:#000;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+font-family:Arial,sans-serif;
+cursor:pointer;
+}
+
+#bg{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:radial-gradient(circle,#222,#000);
+transition:1s;
 }
 
 #start{
-    color:white;
-    font-size:30px;
-    font-family:Arial;
-    text-align:center;
+position:absolute;
+padding:18px 50px;
+font-size:28px;
+color:#fff;
+background:#ff2b2b;
+border:none;
+border-radius:50px;
+box-shadow:0 0 30px red;
+animation:pulse 1.2s infinite;
+z-index:5;
+cursor:pointer;
+}
+
+@keyframes pulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.08);}
+100%{transform:scale(1);}
 }
 
 #image{
-    display:none;
-    width:100%;
-    height:100%;
-    object-fit:cover;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+object-fit:cover;
+opacity:0;
+transition:1.5s;
+}
+
+.show{
+opacity:1 !important;
 }
 </style>
 </head>
 
 <body>
 
-<div id="start">
-    НАЖМИ!!
-</div>
+<div id="bg"></div>
+
+<button id="start">▶ Нажми</button>
 
 <img id="image" src="image.jpg">
 
@@ -53,24 +84,36 @@ body{
 
 <script>
 
-document.body.addEventListener("click", async ()=>{
+const btn = document.getElementById("start");
+const img = document.getElementById("image");
+const audio = document.getElementById("audio");
 
-    document.getElementById("start").style.display="none";
-    document.getElementById("image").style.display="block";
+btn.onclick = async () => {
 
-    if(document.documentElement.requestFullscreen){
-        document.documentElement.requestFullscreen().catch(()=>{});
+    // Скрыть кнопку
+    btn.style.display = "none";
+
+    // Полноэкранный режим
+    if (document.documentElement.requestFullscreen) {
+        try {
+            await document.documentElement.requestFullscreen();
+        } catch(e) {}
     }
 
-    if(navigator.vibrate){
-        navigator.vibrate([300,100,300]);
-    }
+    // Показать картинку
+    img.classList.add("show");
 
-    const audio=document.getElementById("audio");
-    audio.volume=1;
+    // Запустить звук
+    audio.loop = true;
+    audio.volume = 1;
     audio.play();
 
-},{once:true});
+    // Вибрация
+    if (navigator.vibrate) {
+        navigator.vibrate([300,100,300,100,300]);
+    }
+
+};
 
 </script>
 
